@@ -1,0 +1,650 @@
+<html lang="ru"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CriminalDLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at 10% 20%, #0b0e17, #05070c);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', 'Poppins', sans-serif;
+            color: #ffffff;
+            scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1d2b;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ff5e7c;
+            border-radius: 10px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ========== ВЕРХНЯЯ СЕКЦИЯ: СТАТИСТИКА (БЕЗ ПОЛЬЗОВАТЕЛЕЙ И ЗАПУСКОВ) ========== */
+        .stats-section {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: radial-gradient(ellipse at 30% 40%, rgba(255, 94, 124, 0.12), transparent 70%);
+        }
+
+        .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-card {
+            background: rgba(12, 15, 25, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1.6rem 1.8rem;
+            min-width: 170px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s ease, border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255, 94, 124, 0.6);
+        }
+
+        .stat-number {
+            font-size: 3.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFFFFF, #ffb3c1);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            color: #b9c3e6;
+            margin-top: 0.5rem;
+        }
+
+        .badge-pvp {
+            display: inline-block;
+            background: #ff3366cc;
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 6px;
+            backdrop-filter: blur(2px);
+        }
+
+        .hero-text-block {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .hero-title span {
+            background: linear-gradient(125deg, #FFE6A3, #FF8AAE, #FF5E7C);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .adaptive-text {
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            color: #ccd6f6;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        .features-highlight {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-top: 1rem;
+            background: linear-gradient(145deg, #FFD166, #FF5E7C);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Блок с кнопкой и скролл-хинтом */
+        .action-area {
+            margin-top: 4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Стиль кнопки скачивания */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(105deg, #FF5E7C, #FF3366);
+            padding: 0.9rem 2.2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(255, 51, 102, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            cursor: pointer;
+            backdrop-filter: blur(2px);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 51, 102, 0.6);
+            background: linear-gradient(105deg, #FF6F8C, #FF4D6D);
+        }
+
+        .download-btn:active {
+            transform: translateY(1px);
+        }
+
+        .scroll-hint {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #8f9bb5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scroll-hint i {
+            font-size: 1.8rem;
+            animation: bounce 1.8s infinite;
+            display: inline-block;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        /* ========== DYNAMIC ISLAND СЕКЦИЯ (исправлено наложение) ========== */
+        .dynamic-section {
+            padding: 5rem 0 7rem;
+            background: linear-gradient(180deg, #0a0d16 0%, #03050a 100%);
+        }
+
+        .dynamic-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dynamic-header h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(115deg, #fff, #c0e0ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .dynamic-header p {
+            color: #a0b0d0;
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 1rem auto 0;
+        }
+
+        .island-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dynamic-island {
+            background: rgba(20, 24, 40, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 48px;
+            padding: 1.8rem 2.2rem;
+            max-width: 800px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .island-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px dashed rgba(255, 94, 124, 0.5);
+            padding-bottom: 0.75rem;
+        }
+
+        .island-title span:first-child {
+            background: #FF5E7C;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.2rem;
+        }
+
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .event-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+            gap: 1rem;
+            padding: 0.7rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 60px;
+            transition: background 0.2s;
+            border: 1px solid transparent;
+        }
+
+        @media (max-width: 550px) {
+            .event-row {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .event-name {
+                font-size: 0.95rem;
+                white-space: normal;
+                word-break: keep-all;
+            }
+            .event-time {
+                font-size: 1.1rem;
+            }
+            .dynamic-island {
+                padding: 1.2rem 1.2rem;
+            }
+            .island-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        .event-row:hover {
+            background: rgba(255, 94, 124, 0.12);
+            border-color: rgba(255, 94, 124, 0.4);
+        }
+
+        .event-name {
+            font-size: 1.05rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 550px) {
+            .event-name {
+                white-space: normal;
+            }
+        }
+
+        .event-name::before {
+            content: "⚡";
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .event-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #FFE6C7, #FFB347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+            min-width: 70px;
+            text-align: right;
+        }
+
+        .island-footer {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #6a7aa5;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1rem;
+        }
+
+        .extra-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2.5rem;
+        }
+
+        .mini-chip {
+            background: #0f121e80;
+            border-radius: 40px;
+            padding: 0.4rem 1.2rem;
+            backdrop-filter: blur(4px);
+            font-size: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .fade-up {
+            animation: fadeUp 0.6s ease-out;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.7rem;
+            color: #4f5b82;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ВЕРХНЯЯ ЧАСТЬ: СТАТИСТИКА (только PVP, шахта, сундук) -->
+<section class="stats-section">
+    <div class="container">
+        <div class="hero-text-block fade-up">
+            <div class="hero-title">
+                Улучшаем <span>Ваш Игровой Опыт</span>
+            </div>
+            <div class="adaptive-text">
+                Уникальными &nbsp;•&nbsp; Адаптивными
+            </div>
+            <div class="features-highlight">
+                ФУНКЦИЯМИ
+            </div>
+        </div>
+
+        <!-- Только три блока: PVP режим, Мифическая шахта, Мистический сундук -->
+        <div class="stats-grid fade-up" style="animation-delay: 0.1s;">
+            <div class="stat-card">
+                <div class="stat-number" id="pvpTimerDisplay">25s</div>
+                <div class="stat-label">Вы в PVP режиме</div>
+                <div class="badge-pvp">⚔️ Активен</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="mineTimerDisplay">2:40</div>
+                <div class="stat-label">Мифическая шахта</div>
+                <div style="font-size: 0.7rem; margin-top: 6px; opacity:0.7;">⭐ До события</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="chestTimerDisplay">2:40</div>
+                <div class="stat-label">Мистический сундук</div>
+                <div style="font-size: 0.7rem; margin-top: 6px; opacity:0.7;">🎁 Редкий лут</div>
+            </div>
+        </div>
+
+        <!-- НОВАЯ ОБЛАСТЬ: кнопка Скачать + текст "пролистайте вниз" -->
+        <div class="action-area fade-up" style="animation-delay: 0.2s;">
+            <!-- Кнопка, которая ведет на другой сайт (ссылка меняется по желанию) -->
+            <a href="https://www.dropbox.com/scl/fi/q64xonmu5irre1313s0ae/CriminalDLC-launcher.exe?rlkey=360an41rfwgu45x16k9dmqjfi&st=fyjy43ea&dl=1" class="download-btn" target="_blank" rel="noopener noreferrer">
+                📥 Скачать (Fabric 1.16.5, 1.21.4)
+            </a>
+            <div class="scroll-hint">
+                <span>пролистайте вниз — Dynamic Island с событиями серверов</span>
+                <i>👇</i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DYNAMIC ISLAND СЕКЦИЯ -->
+<section class="dynamic-section">
+    <div class="container">
+        <div class="dynamic-header">
+            <h2>Dynamic Island</h2>
+            <p>События серверов. Отображает разные ивенты с популярных серверов: время до активации мистических сундуков, алтарей, вулканов</p>
+        </div>
+
+        <div class="island-container">
+            <div class="dynamic-island">
+                <div class="island-title">
+                    <span>🏝️</span> 
+                    <span>Лента событий • реальное время</span>
+                </div>
+                <div class="events-list" id="eventsList"><div class="event-row"><div class="event-name">Мистический Алтарь</div><div class="event-time">4:09</div></div><div class="event-row"><div class="event-name">Метеоритный дождь</div><div class="event-time">2:57</div></div><div class="event-row"><div class="event-name">Маяк Убийца</div><div class="event-time">4:53</div></div><div class="event-row"><div class="event-name">Сундук Смерти</div><div class="event-time">2:35</div></div><div class="event-row"><div class="event-name">Вулкан</div><div class="event-time">1:15</div></div></div>
+                <div class="island-footer">
+                    ⚡ Таймеры обновляются каждую секунду | Случайные интервалы ивентов
+                </div>
+            </div>
+        </div>
+
+        <div class="extra-badges">
+            <div class="mini-chip">🔥 Мистический Алтарь: динамический отсчёт</div>
+            <div class="mini-chip">🌑 Метеоритный дождь: фазы</div>
+            <div class="mini-chip">⚡ Маяк Убийца: скорое появление</div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    Игровой портал — актуальные события серверов. Таймеры генерируются случайно для динамики.
+</footer>
+
+<script>
+    // --- ФУНКЦИИ ДЛЯ РАНДОМНЫХ ТАЙМЕРОВ (Dynamic Island) ---
+    const eventNames = [
+        "Мистический Алтарь",
+        "Метеоритный дождь",
+        "Маяк Убийца",
+        "Сундук Смерти",
+        "Вулкан"
+    ];
+    
+    let eventRowElements = [];
+    
+    function formatTime(seconds) {
+        if (seconds < 0) seconds = 0;
+        if (seconds < 60) {
+            return `${seconds}s`;
+        } else {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs < 10 ? '0' + secs : secs}`;
+        }
+    }
+    
+    function getRandomInitialTime() {
+        return Math.floor(Math.random() * 300) + 30;
+    }
+    
+    function initDynamicIsland() {
+        const eventsContainer = document.getElementById('eventsList');
+        if (!eventsContainer) return;
+        eventsContainer.innerHTML = '';
+        eventRowElements = [];
+        
+        eventNames.forEach((name) => {
+            const initSec = getRandomInitialTime();
+            const row = document.createElement('div');
+            row.className = 'event-row';
+            
+            const nameSpan = document.createElement('div');
+            nameSpan.className = 'event-name';
+            nameSpan.textContent = name;
+            
+            const timeSpan = document.createElement('div');
+            timeSpan.className = 'event-time';
+            timeSpan.textContent = formatTime(initSec);
+            
+            row.appendChild(nameSpan);
+            row.appendChild(timeSpan);
+            eventsContainer.appendChild(row);
+            
+            eventRowElements.push({
+                timeElem: timeSpan,
+                currentSec: initSec
+            });
+        });
+    }
+    
+    function updateIslandTimers() {
+        for (let i = 0; i < eventRowElements.length; i++) {
+            let item = eventRowElements[i];
+            let newSec = item.currentSec - 1;
+            if (newSec <= 0) {
+                const randomReset = Math.floor(Math.random() * 260) + 20;
+                newSec = randomReset;
+                const timeElem = item.timeElem;
+                timeElem.style.transform = 'scale(1.05)';
+                timeElem.style.transition = '0.1s';
+                setTimeout(() => {
+                    if (timeElem) timeElem.style.transform = '';
+                }, 200);
+            }
+            item.currentSec = newSec;
+            item.timeElem.textContent = formatTime(newSec);
+        }
+    }
+    
+    // --- ТАЙМЕРЫ ДЛЯ ВЕРХНЕЙ СТАТИСТИКИ (PVP, мифическая шахта, мистический сундук) ---
+    let pvpSeconds = 30;
+    let mineSeconds = 165;
+    let chestSeconds = 165;
+    
+    const pvpElem = document.getElementById('pvpTimerDisplay');
+    const mineElem = document.getElementById('mineTimerDisplay');
+    const chestElem = document.getElementById('chestTimerDisplay');
+    
+    function formatStatsTime(seconds, type) {
+        if (type === 'pvp') {
+            return `${seconds}s`;
+        }
+        if (seconds < 60) {
+            return `${seconds}s`;
+        } else {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs < 10 ? '0' + secs : secs}`;
+        }
+    }
+    
+    function updateStatsTimers() {
+        if (pvpSeconds <= 0) {
+            pvpSeconds = Math.floor(Math.random() * 21) + 20;
+        } else {
+            pvpSeconds--;
+        }
+        if (pvpElem) pvpElem.textContent = formatStatsTime(pvpSeconds, 'pvp');
+        
+        if (mineSeconds <= 0) {
+            mineSeconds = Math.floor(Math.random() * 121) + 90;
+        } else {
+            mineSeconds--;
+        }
+        if (mineElem) mineElem.textContent = formatStatsTime(mineSeconds, 'normal');
+        
+        if (chestSeconds <= 0) {
+            chestSeconds = Math.floor(Math.random() * 131) + 70;
+        } else {
+            chestSeconds--;
+        }
+        if (chestElem) chestElem.textContent = formatStatsTime(chestSeconds, 'normal');
+    }
+    
+    function addExtraFlavor() {
+        const chips = document.querySelectorAll('.mini-chip');
+        if (chips.length) {
+            const messages = [
+                "🔥 Мистический Алтарь: активируется",
+                "🌑 Метеоритный дождь: скоро удар",
+                "⚡ Маяк Убийца: луч активирован",
+                "💀 Сундук Смерти: опасность",
+                "🌋 Вулкан: извержение"
+            ];
+            setInterval(() => {
+                chips.forEach((chip, idx) => {
+                    if (idx === 0) {
+                        const randMsg = messages[Math.floor(Math.random() * messages.length)];
+                        chip.textContent = randMsg;
+                    }
+                });
+            }, 8000);
+        }
+    }
+    
+    // Инициализация
+    function init() {
+        initDynamicIsland();
+        setInterval(() => {
+            updateStatsTimers();
+        }, 1000);
+        setInterval(() => {
+            updateIslandTimers();
+        }, 1000);
+        addExtraFlavor();
+        
+        // Небольшая анимация для кнопки (дополнительно)
+        const btn = document.querySelector('.download-btn');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                // ссылка уже ведет на внешний сайт, можно оставить как есть
+                console.log('Клик по кнопке "Скачать", переход на внешний ресурс');
+            });
+        }
+    }
+    
+    init();
+</script>
+
+</body></html>
